@@ -52,8 +52,10 @@
                 box-sizing: border-box;
                 border-top-left-radius: 5px; 
                 border-top-right-radius: 5px;
-
 			}
+            .slideImage:hover {
+                cursor: pointer;
+            }
             figcaption{
                 font-weight: bold;
                 color: darkblue;
@@ -117,8 +119,9 @@
                 visibility: none;
             }
             #details{
+				margin: -400px 0 0 -410px;
+                height: auto;
                 background: #5e5e5e;
-                color: #fff;
             }
             #details span{
                 height: 40px;
@@ -136,6 +139,10 @@
                 right: -25px;
                 cursor: pointer;
             }
+            #details p{
+                text-align: left;
+                color: #fff;            
+            }
 		</style>
 
 		<script src="http://code.jquery.com/jquery-1.8.2.min.js" type="text/javascript"></script>
@@ -147,6 +154,7 @@
             });
             
             function jsonload(){
+                var obj, property, index;
                 var output = $.ajax({ 
                     url: 'https://api.imgur.com/3/gallery/r/funny',
                     headers: {
@@ -156,13 +164,16 @@
                     dataType : 'json',
                     success: function() { 
                         //console.log(output.responseText);
-                        var obj = JSON.parse(output.responseText);
-                        for (var index = 0; index < obj.data.length; ++index) {
+                        obj = JSON.parse(output.responseText);
+                        for (index = 0; index < obj.data.length; ++index) {                            
+                            //console.log(obj.data[index]);
                             if(obj.data[index].nsfw== false){
                                 $('#carousel').append('<figure><img class="slideImage" src="'+obj.data[index].link+'"/><figcaption>'+obj.data[index].title+'</figcaption></figure>');
-                                for (var property in obj.data[index]) {
-                                   console.log('item ' + index + ': ' + property + '=' + obj.data[0].property);
-                                }
+                            }
+                            for (property in obj.data[index]) {
+                                //console.log('item ' + index + ': ' + property + '=' + obj.data.property);                           
+                                //console.log('key:'+property+'  value:'+obj.data[index][property]);   ///working
+                                //$('#details').append('<p>'+property+' :  '+obj.data[index][property]+', </p>');
                             }
                         }
                         
@@ -178,6 +189,8 @@
                         
                         $('.slideImage').on('click',function(){
                             $('#details').removeClass('hidden');
+                            console.log('Here');
+                            console.log(this);
                         });
                         $('#details span').on('click',function(){
                             $('#details').addClass('hidden');
