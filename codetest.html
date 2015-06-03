@@ -21,14 +21,14 @@
 				color: #333;
 				line-height: 22px;
 			}
-			#wrapper {
+			#wrapper, #details {
 				background-color: #f0f0f0;
 				border: 1px solid #ccc;
-				border-radius: 100px;
+				border-radius: 20px;
 				width: 800px;
 				height: 550px;
 				padding: 10px;
-				margin: -230px 0 0 -410px;
+				margin: -235px 0 0 -410px;
 				position: absolute;
 				left: 50%;
 				top: 50%;
@@ -44,17 +44,19 @@
                 border-radius: 5px;
                 background: rgba(180, 180, 180,0.7);
             }
-            img {
+            .slideImage {
 				width: 501px;
 				height: 470px;
 				margin: 0 auto;
+                border: 2px ridge #0f0f0f;
+                box-sizing: border-box;
                 border-top-left-radius: 5px; 
                 border-top-right-radius: 5px;
 
 			}
             figcaption{
                 font-weight: bold;
-                color: red;
+                color: darkblue;
                 text-align: center;
                 overflow: visible;
             }
@@ -66,7 +68,7 @@
 				width: 15px;
 				height: 21px;
 				position: absolute;
-				top: 250px;
+				top: 225px;
 			}
 			#prev {
 				background-position: 0 0;
@@ -110,6 +112,30 @@
                 display:block;
                 margin: 0 auto;
             }
+            .hidden{
+                display:none;
+                visibility: none;
+            }
+            #details{
+                background: #5e5e5e;
+                color: #fff;
+            }
+            #details span{
+                height: 40px;
+                width: 40px;
+                border-radius: 20px;
+                background: #f0f0f0;
+                font-size: 2em;
+                font-weight: bold;
+                color: #000;
+                line-height: 40px;
+                text-align: center;
+                float: right;
+                position: relative;
+                top: -25px;
+                right: -25px;
+                cursor: pointer;
+            }
 		</style>
 
 		<script src="http://code.jquery.com/jquery-1.8.2.min.js" type="text/javascript"></script>
@@ -121,22 +147,22 @@
             });
             
             function jsonload(){
-                
                 var output = $.ajax({ 
                     url: 'https://api.imgur.com/3/gallery/r/funny',
                     headers: {
                         'Authorization': 'Client-ID 648d825dc3960cb'
                     },
-                    //cache: false,
+                    cache: false,
                     dataType : 'json',
                     success: function() { 
                         //console.log(output.responseText);
                         var obj = JSON.parse(output.responseText);
                         for (var index = 0; index < obj.data.length; ++index) {
-                            //console.log('nsfw['+index+']: '+obj.data[index].nsfw);
                             if(obj.data[index].nsfw== false){
-                                $('#carousel').append('<figure><img src="'+obj.data[index].link+'"/><figcaption>'+obj.data[index].title+'</figcaption></figure>');
-                                //console.log('nsfw['+index+']: '+obj.data[index].nsfw);
+                                $('#carousel').append('<figure><img class="slideImage" src="'+obj.data[index].link+'"/><figcaption>'+obj.data[index].title+'</figcaption></figure>');
+                                for (var property in obj.data[index]) {
+                                   console.log('item ' + index + ': ' + property + '=' + obj.data[0].property);
+                                }
                             }
                         }
                         
@@ -148,11 +174,16 @@
                             prev: '#prev',
                             next: '#next',
                             //pagination: '#pager'
-                        }); 
+                        });                          
                         
+                        $('.slideImage').on('click',function(){
+                            $('#details').removeClass('hidden');
+                        });
+                        $('#details span').on('click',function(){
+                            $('#details').addClass('hidden');
+                        });
                     }
-                });
-                
+                });                
             }
             
             
@@ -163,9 +194,10 @@
 			<div id="carousel"></div>
 			<a id="prev" href="#"></a>
 			<a id="next" href="#"></a>
-			<!--<div id="pager"></div>--> 
-            <input id="refreshButton" type="button" name="button" value="Refresh" onclick="jsonload()">           
+            <input id="refreshButton" type="button" name="button" value="Refresh" onclick="jsonload()">
+			<!--<div id="pager"></div>-->
 		</div>
+        <div id="details" class="hidden" ><span>X</span></div>
 
 	</body>
 </html>
